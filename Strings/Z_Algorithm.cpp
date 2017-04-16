@@ -6,33 +6,55 @@ vector <int> build_Z(string text)
 	int l,r;
 	vector <int> Z(text.size());
 	Z[0] = 0;
-	for(int i = 1 , l = 0, r = 1; i < text.size(); i++)
+	l = r = 0;
+	for(int i = 1; i < text.size(); i++)
 	{
-		if(text[r] != text[l])
+		if(i > r)
 		{
-			Z[i] = (r - l + 1) + Z[i-1];
-			l = 0;
-			r = 0;
+			l = r = i;
 
+			while( r < text.size() && text[r - l] == text[r] ) r++;
+			Z[i] = (r - l);
+			r--;
 		}
 		else
-		{
-			l++;
-			r++;
+		{	
+			int k = i - l;
+
+			if(Z[k] < (r - i + 1)) Z[i] = Z[k];
+			else
+			{
+				l = i;
+				while( r < text.size() && text[r - l] == text[r] ) r++;
+				Z[i] = (r - l);
+				r--;
+			}
 		}
 
 	}
-	Z[0] = -1;
 	return Z;
+}
+
+vector <int> search(string text, string pattern)
+{
+	text = pattern + '&' + text; // change sentinel if is included in dictionary;
+	vector<int> Z = build_Z(text);
+	vector<int> res;
+	for(int i = 0 ; i < Z.size();i++) 
+		if(Z[i] == pattern.size()) 
+			res.push_back(i - pattern.size() -1); 	// This can be optimized by putting this inside build_Z
+		return res;										// but i decided to leave build_Z as vanilla 
 }
 
 int main()
 {
-	string a;
-	cin>>a;
-	vector<int> Z = build_Z(a);
-	cout<<a<<endl;
-	for(int i = 0 ; i < Z.size() ; i++)
-		cout<<Z[i]<<' ';
+	string a,b;
+	cin>>a>>b;
+	vector<int> res = search(a,b);
+	
+	cout<<"Matches: "<<res.size()<<'\n';
+	cout<<"Positions: ";
+	for(int i = 0 ; i < res.size(); i++) cout<<res[i]<<' ';
+	cout<<'\n';
 	return 0;
 }
