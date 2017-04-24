@@ -3,7 +3,7 @@ using namespace std;
 
 struct Trie_Node
 {
-	Trie_Node *ABC[27];
+	Trie_Node *ABC[27]; 	//Standard ABC of lowercase letters.
 	bool Is_Leaf;
 
 	Trie_Node()
@@ -13,7 +13,7 @@ struct Trie_Node
 	}
 
 
-	//Standard ABC of lowercase letters.
+							// 
 	void insert(string key)
 	{
 		Trie_Node *Crawler = this;
@@ -38,6 +38,8 @@ struct Trie_Node
 		return Crawler -> Is_Leaf;	
 
 	}
+
+
 };
 
 
@@ -51,25 +53,4 @@ int main()
 	cout<<head->search("aa")<<endl;
 	cout<<head->search("aaa")<<endl;
 	cout<<head->search("abcd")<<endl;
-
-	queue <Trie_Node *> index;
-	index.push(head);
-	while(!index.empty())
-	{
-		Trie_Node *aux = index.front();
-		index.pop();
-		for(int i = 0; i < 27; i++)
-		{
-			if(aux->ABC[i])
-			{
-					index.push(aux->ABC[i]);
-					cout<< (char)(i +'a')<<' ';
-			}
-			//cout<<0<<' ';
-
-		}
-		cout<<endl;
-	}
-
-
 }
