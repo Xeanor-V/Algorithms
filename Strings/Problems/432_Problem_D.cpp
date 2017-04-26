@@ -1,6 +1,17 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+long long B = 33; // Size of Alphabet
+long long M = 512927377; //A  big prime
+
+long long int_mod(long long a, long long b) // Calculates mod even if a < 0
+{
+	return ( a % b + b) % b;
+}
+
+
+
+
 vector <int> Build_Failure(string pattern)
 {
 	vector <int> F(pattern.size()+1);
@@ -22,7 +33,7 @@ vector <int> Build_Failure(string pattern)
 				F[i] = 0;
 				break;
 			}
-			j = F[j]; // lets check the next possible partial match to see if we can expand that one
+			j = F[i]; // lets check the next possible partial match to see if we can expand that one
 		}
 	}
 	return F;
@@ -43,8 +54,7 @@ int KMP(string text, string patttern) // only counts matches
 		{
 			state++;
 			index++;
-			if(state == patttern.size()) // need to change if unique ocurrences
-					count++;
+			if(state == patttern.size()) count++;
 		}
 
 		else if( state > 0) state = F[state];
@@ -56,9 +66,29 @@ int KMP(string text, string patttern) // only counts matches
 
 
 
+
 int main()
 {
-	cout<<KMP("ABABA","ABA")<<endl;
-	return 0;
+	cin.tie(0);
+	ios_base::sync_with_stdio(0);
+	string a;
+	cin>>a;
+	long long Hp = 0,Hs = 0;
+	string aux = "";
+	for(int i = 0 ; i < a.size() ; i++)
+	{
+		Hp = int_mod(Hp*B + a[i],M );
+		Hs = int_mod(Hp*B + a[a.size()  - 1 - i],M );
+		if(Hp != Hs) break;
+
+		aux = aux + a[i];
+		
+	}
 	
+
+	sort(res.begin(), res.end());
+	cout<<res.size()<<'\n';
+	for(auto v : res) cout<<v.first<<' '<<v.second<<'\n';
+
+	return 0;
 }

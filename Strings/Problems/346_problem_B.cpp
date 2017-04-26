@@ -22,13 +22,13 @@ vector <int> Build_Failure(string pattern)
 				F[i] = 0;
 				break;
 			}
-			j = F[j]; // lets check the next possible partial match to see if we can expand that one
+			j = F[i]; // lets check the next possible partial match to see if we can expand that one
 		}
 	}
 	return F;
 }
 
-int KMP(string text, string patttern) // only counts matches
+int KMP(string text, string patttern) // only counts ocurrrences, modify to obtain locations (easy come on)
 {
 	vector <int> F = Build_Failure(patttern);
 
@@ -43,8 +43,7 @@ int KMP(string text, string patttern) // only counts matches
 		{
 			state++;
 			index++;
-			if(state == patttern.size()) // need to change if unique ocurrences
-					count++;
+			if(state == patttern.size()) count++;
 		}
 
 		else if( state > 0) state = F[state];
@@ -54,11 +53,28 @@ int KMP(string text, string patttern) // only counts matches
 	return count;
 }
 
+int memo[100][100];
+
+int dp(int pos1, int pos2, string a, string b)
+{
+	if(pos1 == a.size() || pos2 == b.size()) return 0;
+	if(memo[pos1][pos2]) return memo[pos1][pos2];
+	int res1 = 0;
+
+	if(a[pos1] == b[pos2]) return memo[pos1][pos2] = dp(pos1+1,pos2+1,a,b) +1;
+
+
+	return memo[pos1][pos2] = max( dp(pos1+1,pos2,a,b) , dp(pos1,pos2+1,a,b));
+
+}
+
+
 
 
 int main()
 {
-	cout<<KMP("ABABA","ABA")<<endl;
+	//cout<<KMP("ABBA","ABA")<<endl;
+	cout<<dp(0,0,"ABCD","ZBCDZ")<<endl;
 	return 0;
 	
 }

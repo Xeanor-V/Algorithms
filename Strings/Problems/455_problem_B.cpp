@@ -3,24 +3,45 @@ using namespace std;
 
 struct Trie_Node
 {
-	Trie_Node *ABC[27];
+	Trie_Node *ABC[27]; 	//Standard ABC of lowercase letters.
 	bool Is_Leaf;
+<<<<<<< HEAD:Strings/Problems/Max_XOR.cpp
 	char value;
+=======
+	bool win;
+>>>>>>> 9bd066f4008024ddeb392e4302f7ccae0fad1801:Strings/Problems/455_problem_B.cpp
 
 	Trie_Node(char a)
 	{
 		Is_Leaf = false;
 		for(int i = 0 ; i < 27 ; i++) ABC[i] = NULL;
+<<<<<<< HEAD:Strings/Problems/Max_XOR.cpp
 		value = a;
 	}
 	//Standard ABC of lowercase letters.
+=======
+		win = false;
+	}
+
+
+							// 
+>>>>>>> 9bd066f4008024ddeb392e4302f7ccae0fad1801:Strings/Problems/455_problem_B.cpp
 	void insert(string key)
 	{
 		Trie_Node *Crawler = this;
 		for(int i = 0 ; i < key.size(); i++)
 		{
+<<<<<<< HEAD:Strings/Problems/Max_XOR.cpp
 			if(Crawler -> ABC[key[i] - '0'] == NULL) Crawler -> ABC[key[i] -'0'] = new Trie_Node(key[i] - '0');
 			Crawler = Crawler -> ABC[key[i] - '0'];
+=======
+			if(Crawler -> ABC[key[i] - 'a'] == NULL)
+			{
+					Crawler -> ABC[key[i] -'a'] = new Trie_Node();
+					Crawler -> ABC[key[i] - 'a'] -> win = !Crawler->win;
+			}
+			Crawler = Crawler -> ABC[key[i] - 'a'];
+>>>>>>> 9bd066f4008024ddeb392e4302f7ccae0fad1801:Strings/Problems/455_problem_B.cpp
 		}
 
 		Crawler -> Is_Leaf = true;
@@ -39,6 +60,7 @@ struct Trie_Node
 
 	}
 
+<<<<<<< HEAD:Strings/Problems/Max_XOR.cpp
 
 	int Query_XOR(string Y)
 	{
@@ -81,6 +103,14 @@ struct Trie_Node
 		}
 		return res;
 	}
+=======
+	bool move()
+	{
+
+	}
+
+
+>>>>>>> 9bd066f4008024ddeb392e4302f7ccae0fad1801:Strings/Problems/455_problem_B.cpp
 };
 
 //Obtaining maximun xor from group of numbers
@@ -90,6 +120,7 @@ struct Trie_Node
 
 int main()
 {
+<<<<<<< HEAD:Strings/Problems/Max_XOR.cpp
 	Trie_Node *head = new Trie_Node('0');
 
 	
@@ -125,4 +156,13 @@ int main()
 	cout<<head -> Query_XOR(aux)<<endl;
 	return 0;
 
+=======
+	Trie_Node *head = new Trie_Node();
+	head->insert("aaa");
+	head->insert("abcd");
+	cout<<head->search("a")<<endl;
+	cout<<head->search("aa")<<endl;
+	cout<<head->search("aaa")<<endl;
+	cout<<head->search("abcd")<<endl;
+>>>>>>> 9bd066f4008024ddeb392e4302f7ccae0fad1801:Strings/Problems/455_problem_B.cpp
 }

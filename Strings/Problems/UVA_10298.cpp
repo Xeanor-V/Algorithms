@@ -22,7 +22,7 @@ vector <int> Build_Failure(string pattern)
 				F[i] = 0;
 				break;
 			}
-			j = F[j]; // lets check the next possible partial match to see if we can expand that one
+			j = F[i]; // lets check the next possible partial match to see if we can expand that one
 		}
 	}
 	return F;
@@ -43,8 +43,11 @@ int KMP(string text, string patttern) // only counts matches
 		{
 			state++;
 			index++;
-			if(state == patttern.size()) // need to change if unique ocurrences
-					count++;
+			if(state == patttern.size()) 
+			{
+				count++;
+				state = 0;
+			}
 		}
 
 		else if( state > 0) state = F[state];
@@ -58,7 +61,40 @@ int KMP(string text, string patttern) // only counts matches
 
 int main()
 {
-	cout<<KMP("ABABA","ABA")<<endl;
+	//cin.tie(0);
+	//ios_base::sync_with_stdio(0);
+	string s;
+	while(cin>>s)
+	{
+		if(s == ".") break;
+		
+		vector<int> factor;
+		for(int i = 1 ; i <= ( sqrt(s.size()) ); i++) 
+		{
+			if( s.size() % i ==0 ) 
+			{
+					factor.push_back(i);
+					if( s.size() / i != i) factor.push_back(s.size()/i);
+			}
+		}
+
+		sort(factor.begin(), factor.end());
+		//for(int i = 0 ; i < factor.size() ;i++) cout<<factor[i]<<'\n';
+
+		int maxi = 0;
+		for(int i = factor.size() - 1; i >=0 ;i--)
+		{
+			string aux = s.substr(0,factor[i]);
+			int count = KMP(s,aux);
+			//cout<<factor[i]<<endl;
+			if(count == s.size()/factor[i])
+			{
+					int n = s.size()/factor[i];
+					maxi = max(maxi,n);
+			}
+		}		
+		cout<<maxi<<'\n';
+	}
 	return 0;
 	
 }
