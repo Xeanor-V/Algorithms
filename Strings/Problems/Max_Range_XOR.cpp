@@ -40,7 +40,7 @@ struct Trie_Node
 	}
 
 
-	int Query_XOR(string Y)
+	long long Query_XOR(string Y)
 	{
 			string aux ="";
 			Trie_Node *Crawler = this;
@@ -74,7 +74,7 @@ struct Trie_Node
 
 				}
 			}
-		int res = 0;
+		long long res = 0;
 		for(int i = 0 ; i < aux.size() ; i++)
 		{
 			if(aux[i] == '1') res = (res | (1<<(aux.size() - (i+1) )) );
@@ -83,46 +83,78 @@ struct Trie_Node
 	}
 };
 
-//Obtaining maximun xor from group of numbers
+
+
+string int_to_bin(long long n, int NB)
+{
+	string aux = "";
+	for(int i = NB; i >=0; i--)
+	{
+		if(n & (1<<i)) aux+="1";
+		else aux+="0";
+	}
+	return aux;
+}
+
+//Obtaining maximun xor from all contiguos subarrays of an array
 // N for size of set
 // Y for upperbound of XOR
 
 
+int num_bits(long long n)
+{
+	int res = 0;
+	while(n)
+	{
+		n/=2;
+		res++;
+	}
+	return res;
+}
+
 int main()
 {
-	Trie_Node *head = new Trie_Node('0');
-
-	
-	int N, Y;
-	
-	cin>>N>>Y;
-	int maxN = Y;
-	vector<int> num(N);
-	for(int i = 0 ; i < N ; i++)
+	//cout<<num_bits(100000)<<endl;
+	cin.tie(0);
+	ios_base::sync_with_stdio(0);
+	int N, T;
+	cin>>T;
+	while(T--)
 	{
-		cin>>num[i];
-		maxN = max(maxN, num[i]);
-	}
-	maxN = log2(maxN); // find minimun number of bits for all numbers
-	string aux;
-	for(int i = 0 ; i < N; i++) // convert to binary every number
-	{
-		aux = "";
-		for(int j = maxN; j>=0; j--)
+		Trie_Node *head = new Trie_Node('0');
+		cin>>N;
+		long long maxN = 0;
+		vector<long long> num(N);
+		for(int i = 0 ; i < N ; i++)
 		{
-			if(num[i] & 1<<j) aux+="1";
-			else aux += "0";
-		
+			cin>>num[i];
+			maxN = max(maxN, num[i]);
 		}
-		head -> insert(aux);
+		maxN = num_bits(maxN); // find minimun number of bits for all numbers
+		long long ans = 0;
+		long long pre = 0;
+		head -> insert( int_to_bin(0,maxN));
+		for(int i = 0 ; i < N; i++)
+		{
+			pre = pre ^ num[i];
+			string aux = int_to_bin(pre,maxN);
+			ans = max(ans, head -> Query_XOR(aux));
+			head -> insert(aux);
+		}
+		cout<<ans<<'\n';
 	}
-	aux ="";
-	for(int i = maxN ; i>=0; i--) // Y to binary
-	{
-		if(Y & 1<<i) aux+="1";
-			else aux += "0";
-	}
-	cout<<head -> Query_XOR(aux)<<endl;
 	return 0;
 
 }
+/*
+
+2  
+5  
+3  7  7  7  0  
+5  
+3  8  2  6  4
+
+*/
+
+
+

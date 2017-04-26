@@ -15,7 +15,7 @@ bool Rolling_Hash(string text, string pattern) // Rabin - Karp Algorithm
 	if( text.size() < pattern.size() ) return false;
 
 	long long Hp = 0, Ht = 0, m = pattern.size();
-	for(int i = 0 ; i < m ; i++) // Hash of patter X First Hash of text
+	for(int i = 0 ; i < m ; i++) // Hash of pattern X First Hash of text
 	{
 		Hp = int_mod(Hp * B +  pattern[i], M);
 		Ht = int_mod(Ht * B + text[i], M);
