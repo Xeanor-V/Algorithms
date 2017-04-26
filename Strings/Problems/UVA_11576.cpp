@@ -43,7 +43,11 @@ int KMP(string text, string patttern) // only counts matches
 		{
 			state++;
 			index++;
-			if(state == patttern.size()) count++;
+			if(state == patttern.size())
+			{
+					count++;
+					if(index != text.size()) state = 0;
+			}
 		}
 
 		else if( state > 0) state = F[state];
@@ -75,9 +79,6 @@ int main()
 			a = b;
 		}
 		cout<<res<<'\n';
-
-	
-
 	}
 	return 0;
 

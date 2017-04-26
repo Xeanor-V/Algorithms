@@ -43,7 +43,7 @@ int KMP(string text, string patttern) // only counts matches
 		{
 			state++;
 			index++;
-			if(state == patttern.size()) 
+			if(state == patttern.size())
 			{
 				count++;
 				state = 0;
@@ -61,40 +61,36 @@ int KMP(string text, string patttern) // only counts matches
 
 int main()
 {
-	//cin.tie(0);
-	//ios_base::sync_with_stdio(0);
-	string s;
-	while(cin>>s)
+	int t;
+	cin>>t;
+	while(t--)
 	{
-		if(s == ".") break;
-		
+		string a;
+		cin>>a;
 		vector<int> factor;
-		for(int i = 1 ; i <= ( sqrt(s.size()) ); i++) 
+		for(int i = 1 ; i <= ( sqrt(a.size()) ); i++) 
 		{
-			if( s.size() % i ==0 ) 
+			if( a.size() % i ==0 ) 
 			{
 					factor.push_back(i);
-					if( s.size() / i != i) factor.push_back(s.size()/i);
+					if( a.size() / i != i) factor.push_back(a.size()/i);
 			}
 		}
-
-		sort(factor.begin(), factor.end());
-		//for(int i = 0 ; i < factor.size() ;i++) cout<<factor[i]<<'\n';
-
-		int maxi = 0;
-		for(int i = factor.size() - 1; i >=0 ;i--)
+		int mini = 1<<30;
+		for(int i = 0 ; i < factor.size(); i++)
 		{
-			string aux = s.substr(0,factor[i]);
-			int count = KMP(s,aux);
-			//cout<<factor[i]<<endl;
-			if(count == s.size()/factor[i])
+			string aux = a.substr(0,factor[i]);
+
+			int count = KMP(a,aux);
+			int n = aux.size();
+			int m = a.size();
+			if(m / n == count)
 			{
-					int n = s.size()/factor[i];
-					maxi = max(maxi,n);
+				mini = min(mini, n );
 			}
-		}		
-		cout<<maxi<<'\n';
+		}
+		cout<<mini<<'\n';
 	}
-	return 0;
+	return 0; 	
 	
 }

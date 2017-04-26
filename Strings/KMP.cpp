@@ -43,7 +43,8 @@ int KMP(string text, string patttern) // only counts matches
 		{
 			state++;
 			index++;
-			if(state == patttern.size()) count++;
+			if(state == patttern.size()) // need to change if unique ocurrences
+					count++;
 		}
 
 		else if( state > 0) state = F[state];
@@ -57,7 +58,7 @@ int KMP(string text, string patttern) // only counts matches
 
 int main()
 {
-	cout<<KMP("ABBA","ABA")<<endl;
+	cout<<KMP("ABABA","ABA")<<endl;
 	return 0;
 	
 }
