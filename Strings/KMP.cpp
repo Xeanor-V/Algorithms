@@ -58,6 +58,12 @@ int KMP(string text, string patttern) // only counts matches
 
 int main()
 {
+	vector <int> F = Build_Failure("ABRACADABRA");
+	for(int i = 0 ; i < F.size(); i++)
+	{
+		cout<<F[i]<<' ';
+	}
+	cout<<endl;
 	cout<<KMP("ABABA","ABA")<<endl;
 	return 0;
 	

@@ -156,13 +156,4 @@ int main()
 	cout<<head -> Query_XOR(aux)<<endl;
 	return 0;
 
-=======
-	Trie_Node *head = new Trie_Node();
-	head->insert("aaa");
-	head->insert("abcd");
-	cout<<head->search("a")<<endl;
-	cout<<head->search("aa")<<endl;
-	cout<<head->search("aaa")<<endl;
-	cout<<head->search("abcd")<<endl;
->>>>>>> 9bd066f4008024ddeb392e4302f7ccae0fad1801:Strings/Problems/455_problem_B.cpp
 }

@@ -22,7 +22,7 @@ vector <int> Build_Failure(string pattern)
 				F[i] = 0;
 				break;
 			}
-			j = F[i]; // lets check the next possible partial match to see if we can expand that one
+			j = F[j]; // lets check the next possible partial match to see if we can expand that one
 		}
 	}
 	return F;
