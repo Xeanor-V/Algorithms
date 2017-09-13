@@ -1,5 +1,5 @@
 # Algorithms
 
-My implementations of algorithms related to:
+My implementations of algorithms and problems related to:
 
 - Strings
