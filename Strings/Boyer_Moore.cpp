@@ -5,7 +5,7 @@ using namespace std;
 // Whole ascii this time for fun
 int No_Chars = 256;
 
-vector <int> BadChar(string pattern)
+vector <int> BadChar(string pattern) // Bad Char Heuristic / find the last ocurrence of character
 {
 	vector <int> BC(No_Chars,-1);
 	for(int i = 0 ; i < pattern.size() ;i++) BC[ pattern[i] ] = i;
@@ -13,9 +13,9 @@ vector <int> BadChar(string pattern)
 }
 
 
-int Bo_Mo(string text, string pattern)
+int Bo_Mo(string text, string pattern) // Heuristic search O(n/m)
 {
-	vector <int> BC = BadChar(pattern);
+	vector <int> BC = BadChar(pattern); // pre - pro
 
 	int m = pattern.size();
 	int index = 0;
@@ -24,17 +24,16 @@ int Bo_Mo(string text, string pattern)
 	while(index <= text.size() - m)
 	{
 		int state = m-1;
-		while(state >= 0 && pattern[state] == text[index + state]) state--;
+		while(state >= 0 && pattern[state] == text[index + state]) state--; // matching 
 
-		if(state < 0)
+		if(state < 0) // if we get a full match on the substr
 		{
-			count++;
-
-			index += (index + m < text.size())? m - BC[ text[index + m]] : 1;
-		}
+			count++; // Shift the string till the best ocurrence of the next char if not existing
+			index += (index + m < text.size())? m - BC[ text[index + m]] : 1; // -1 we skip that char
+		}																	  // also cool!	
 		else
-		{
-			index+= max(1, state - BC[text[state + index]]);
+		{ // if failed then we shift the pattern till the next ocurrence in the pattern of the
+			index+= max(1, state - BC[text[state + index]]); // char that failed and try again
 		}
 	}
 
