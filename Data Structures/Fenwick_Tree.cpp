@@ -4,11 +4,13 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+//The tree starts its index at 1
 struct FenTree {
     //Vector for representing the tree as an array
     vector<long long int> tree;
     FenTree(int n) : tree(n + 1) {}
     
+    //Forward propagating value to parents
     void Insert(long long int i, long long int v) {
         while (i < tree.size()) {
             tree[i] += v;
@@ -16,6 +18,7 @@ struct FenTree {
         }
     }
     
+    //Back propagating index in order to obtain value from 'parents'
     long long int Query(long long int i) {
          long long int sum = 0;
         while (i > 0) {
