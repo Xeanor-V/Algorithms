@@ -35,7 +35,7 @@ void ifft(CArray& x)
     // conjugate the complex numbers
     x = x.apply(conj);
     // forward fft
-    fft( x );
+    fft(x);
     // conjugate the complex numbers again
     x = x.apply(conj);
     // scale the numbers

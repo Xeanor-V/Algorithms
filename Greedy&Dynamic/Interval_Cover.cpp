@@ -4,6 +4,7 @@
 using namespace std;
 
 
+double epsilon = 1e-5;
 template<typename Type>
 void Print_Vector(vector<Type> vec)
 {
@@ -40,13 +41,13 @@ vector<int> getCover(double L, double R, vector<Range> ranges)
 	vector <int> trash;
 	sort(ranges.begin(), ranges.end()) ;
 	double point = L;
-	int last = ranges.size() - 1;
+	int last = 0;
 	double delta = getDelta(L,R);
-	bool same = delta<1e-9?true:false;
-	while(point < R)
+	bool same = delta<epsilon?true:false;
+	while(point < R && getDelta(point,R) > epsilon)
 	{
 		int index = -1;
-		for(int i = ranges.size()-1; i>=0; i--)
+		for(int i = ranges.size()-1; i>=last; i--)
 		{
 			//Check if we can res the interval or that segment is not worth it
 			if(ranges[i].L > point) continue;
@@ -59,7 +60,8 @@ vector<int> getCover(double L, double R, vector<Range> ranges)
 		{
 			//Add to the results and check if we only need one
 			res.push_back(ranges[index].index);
-			ranges.erase(ranges.begin() + index);
+			//Update our search.
+			last = ranges[index].index + 1;
 		}
 		else
 		{
@@ -67,7 +69,7 @@ vector<int> getCover(double L, double R, vector<Range> ranges)
 		}
 		if(same) break;
 	}
-	if (point < R) return trash;
+	if (getDelta(point,R) > epsilon) return trash;
 	return res;
 }
 
