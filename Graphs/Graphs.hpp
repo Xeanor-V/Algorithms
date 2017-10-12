@@ -104,3 +104,228 @@ struct DJSet {
                                          
         return graph;
     }
+
+    /**
+     * 
+     * Accepts the graph in adjacency list format.
+     * start denotes the start index of the node. Index starts from 0
+     * dist_path is used to return distance to node or path conditionally.
+     * 
+     * */
+    vector<int> djiktra_path(vector<vector<pair<int, int> > > graph, int start, char dist_path = 'D')
+    {
+
+        vector<int> Q;
+        vector<int> distance(graph.size());
+        vector<int> prev(graph.size(), -1);
+        for (int i = 0; i < graph.size(); i++)
+        {
+            distance[i] = 9999999;
+            Q.push_back(i);
+        }
+        distance[start] = 0;
+
+        while (!Q.empty())
+        {
+            int min = 9999999, idx = 0, node;
+            for (int i = 0; i < Q.size(); i++)
+            {
+                if (distance[Q[i]] < min)
+                {
+                    min = distance[Q[i]];
+                    idx = i;
+                    node = Q[i];
+                }
+            }
+
+            int minNode = idx;
+            int minDist = min;
+
+            // for each neighbour of node that still exists in Q (the unprocessed list of nodes)
+            for (int j = 0; j < graph[node].size(); j++)
+            {
+                if (find(Q.begin(), Q.end(), graph[node][j].first) != Q.end())
+                {
+                    int alt;
+                    alt = min + graph[node][j].second;
+                    if (alt < distance[graph[node][j].first])
+                    {
+                        distance[graph[node][j].first] = alt;
+                        prev[graph[node][j].first] = node;
+                    }
+                }
+            }
+            Q.erase(Q.begin() + idx);
+        }
+
+        if (dist_path == 'P')
+            return prev;
+        else
+            return distance;
+    }
+
+    /**
+     * 
+     * Api to return a vector of shortest path from the start node to the destination node if one exists
+     * 
+     * */
+    vector<int> constructed_path(vector<int> parent, int start, int dest)
+    {
+        bool breakout = false;
+        vector<int> res;
+        if (start == dest)
+        {
+            res.push_back(start);
+            return res;
+        }
+        res.push_back(dest);
+        int prev = parent[dest];
+        while (prev != start)
+        {
+            if (prev == -1)
+            {
+                breakout = true;
+                break;
+            }
+            res.push_back(prev);
+            prev = parent[prev];
+        }
+        if (!breakout)
+        {
+            res.push_back(start);
+            reverse(res.begin(), res.end());
+        }
+        else
+        {
+            res.clear();
+        }
+        return res;
+    }
+
+    /**
+     * 
+     * Helper function to help with the time factor during distance/cost computation in dijkstra
+     * 
+     * */
+    int finder(int timer, int strtT, int stpT, int dist)
+    {
+
+        if (stpT == 0)
+        {
+            if (strtT >= timer)
+                return strtT - timer;
+            else
+                return MAX;
+        }
+        if (strtT >= timer)
+            return strtT - timer;
+        int t = (timer - strtT + stpT - 1) / stpT;
+        return strtT + t * stpT - timer;
+    }
+    /**
+     * 
+     * Dijkstra shortest path augmented with edge timings. Each element in graph is a pair of pairs
+     * first.first : to_node
+     * first.second : distance to to_node
+     * second.first : t0
+     * second.secon : P
+     * 
+     * Stored as adjacency lists for easy neighbour info collection.
+     * */
+    vector<int> djiktra_time_path(vector<vector<pair<pair<int, int>, pair<int, int> > > > graph, int start, char dist_path = 'D')
+    {
+        vector<int> Q;
+        vector<int> distance(graph.size());
+        vector<int> prev(graph.size(), -1);
+        for (int i = 0; i < graph.size(); i++)
+        {
+            distance[i] = 9999999;
+            Q.push_back(i);
+        }
+        distance[start] = 0;
+
+        while (!Q.empty())
+        {
+            int min = 9999999, idx = 0, node;
+            for (int i = 0; i < Q.size(); i++)
+            {
+                if (distance[Q[i]] < min)
+                {
+                    min = distance[Q[i]];
+                    idx = i;
+                    node = Q[i];
+                }
+            }
+
+            int minNode = idx;
+            int minDist = min;
+            int timer = 0;
+            timer = min;
+            // for each neighbour of node that still exists in Q (the unprocessed list of nodes)
+            for (int j = 0; j < graph[node].size(); j++)
+            {
+
+                if (find(Q.begin(), Q.end(), graph[node][j].first.first) != Q.end())
+                {
+                    int t0, P, dist;
+
+                    t0 = graph[node][j].second.first;
+                    P = graph[node][j].second.second;
+                    dist = graph[node][j].first.second;
+                    int extra = finder(timer, t0, P, dist);
+
+                    int alt;
+                    alt = min + graph[node][j].first.second + extra;
+                    if (alt < distance[graph[node][j].first.first])
+                    {
+                        distance[graph[node][j].first.first] = alt;
+                        prev[graph[node][j].first.first] = node;
+                    }
+                }
+            }
+            Q.erase(Q.begin() + idx);
+        }
+
+        if (dist_path == 'P')
+            return prev;
+        else
+            return distance;
+    }  
+    
+    /**
+     *  Accepts the adjacency list and the start node for the eulerian walk
+     *  Returns the eulerian path if one exists, else returns empty vector.
+     * 
+     *  NOTE: start has to be either:
+     *  1) a random node if all the nodes have even degree or
+     *  2) out of the two odd degree nodes, the one with out degree one greater than in degree
+     * 
+     * */
+    vector <int> eulerian (vector<vector <int> > graph, int start){
+        stack <int> nodestack;
+        vector <int> path;
+        int current = start;
+
+        while(graph[current].size()!=0 || nodestack.size()!=0)
+            if(graph[current].size()==0){
+                path.push_back(current);
+                current = nodestack.top();
+                nodestack.pop();
+            }else{
+                nodestack.push(current);
+                int temp = graph[current][0];
+                graph[current].erase(graph[current].begin()+0);
+                current = temp;
+            }
+        path.push_back(current);        
+    
+        for(int i = 0;i<graph.size();i++){
+            if(graph[i].size()!=0)
+            {
+                path.clear();
+            }
+        }
+        reverse(path.begin(),path.end());
+        cout<<"\n";
+        return path;
+    }
