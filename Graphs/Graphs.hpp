@@ -299,12 +299,17 @@ struct DJSet {
     /**
      *  Accepts the adjacency list and the start node for the eulerian walk
      *  Returns the eulerian path if one exists, else returns empty vector.
+     * 
+     *  NOTE: start has to be either:
+     *  1) a random node if all the nodes have even degree or
+     *  2) out of the two odd degree nodes, the one with out degree one greater than in degree
+     * 
      * */
     vector <int> eulerian (vector<vector <int> > graph, int start){
         stack <int> nodestack;
         vector <int> path;
         int current = start;
-        // cout<<"start : "<<start;
+
         while(graph[current].size()!=0 || nodestack.size()!=0)
             if(graph[current].size()==0){
                 path.push_back(current);

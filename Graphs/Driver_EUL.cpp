@@ -7,6 +7,7 @@
 using namespace std;
 
 int main(){
+    
     int n,m;
     cin>>n>>m;
     while(n!=0 && m!=0){
@@ -36,7 +37,7 @@ int main(){
             }
         }
         vector <int> path;
-        // cout<<countE<<" "<<countL<<" "<<countG<<"\n";
+
         if(countE!=n){
             if(countL!=countG || (countL == countG && countL > 1)){
                 // cout<<"Impossible\n";
