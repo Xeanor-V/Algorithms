@@ -38,16 +38,19 @@ struct DJSet {
         }
     };
 
-    //Custom comparator for edges with weights used by Kruskal aglo
+    //Custom comparator for edges with weights used by Kruskal algo
     struct cost_comparator {
         bool operator() (const w_edge& l, const w_edge& r) const {
             return l.second < r.second;
         }
     };
-    // Obtaining the Minimum spanning tree, for Maximun spanning tree uncomment the reverse
-    // The graph is represented as a vector of w_edges
-    // w_edge acts as {u,v,weight} 
-    // returns the mst and the associated cost
+
+    /*
+    * Obtaining the Minimum spanning tree, for Maximun spanning tree uncomment the reverse
+    * The graph is represented as a vector of w_edges
+    * w_edge acts as {u,v,weight} 
+    * returns the mst and the associated cost
+    */
     pair<vector<edge>,LL> Kruskal(vector<w_edge>graph, int nodes) 
     {
         // Sorting the edges by cost
@@ -76,9 +79,11 @@ struct DJSet {
         return make_pair(mst,maxi);
     }
 
-    // Obtaining distance between all pairs of nodes in a directed graph
-    // The graph is given as an adjacency matrix of n x n 
-    // returns distance matrix 
+    /*
+    * Obtaining distance between all pairs of nodes in a directed graph
+    * The graph is given as an adjacency matrix of n x n 
+    * returns distance matrix 
+    */
     vector< vector<int> > floydWarshall(vector< vector<int> > graph )
     {
         // Case where there's an edge from a node to himself
@@ -105,6 +110,43 @@ struct DJSet {
         return graph;
     }
 
+        //vector<Costo> dist; // <- Resultado
+        vector< vector<int> >  BellmanFerrari(int s,int n, vector< w_edge > graph ) 
+        {
+            vector< vector<int> > steps;
+            vector<int> dist(n,INF);
+            dist[s] = 0;
+            for(int i = 1; i < n; i++)
+            {
+                for(int j = 0; j < graph.size(); j++ )
+                {
+                    int u = graph[j].first.first;
+                    int v = graph[j].first.second;
+                    int w = graph[j].second;
+                    //cout<<u<<' '<<v<<' '<<w<<endl;
+                    if(dist[u] != INF && dist[u] + w < dist[v])
+                        dist[v] = dist[u] + w;
+                }
+                steps.push_back(dist);
+            }
+            if(steps.size() > 0)
+            steps.pop_back();
+            for (int i = 0; i < graph.size(); i++)
+            {
+                int u = graph[i].first.first;
+                int v = graph[i].first.second;
+                int w = graph[i].second;
+                if ( dist[u] != INF && dist[u] + w < dist[v] ) 
+                    dist[v] = -INF;
+            }
+            steps.push_back(dist);
+
+           return steps;
+        }
+
+
+    
+
     /**
      * 
      * Accepts the graph in adjacency list format.
@@ -125,7 +167,7 @@ struct DJSet {
         }
         distance[start] = 0;
 
-        while (!Q.empty())
+        while(!Q.empty())
         {
             int min = 9999999, idx = 0, node;
             for (int i = 0; i < Q.size(); i++)
@@ -215,7 +257,7 @@ struct DJSet {
             if (strtT >= timer)
                 return strtT - timer;
             else
-                return MAX;
+                return INF;
         }
         if (strtT >= timer)
             return strtT - timer;
