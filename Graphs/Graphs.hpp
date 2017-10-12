@@ -76,9 +76,12 @@ struct DJSet {
         return make_pair(mst,maxi);
     }
 
+    // Obtaining distance between all pairs of nodes in a directed graph
+    // The graph is given as an adjacency matrix of n x n 
+    // returns distance matrix 
     vector< vector<int> > floydWarshall(vector< vector<int> > graph )
     {
-        //Case where there's an edge from a node to himself
+        // Case where there's an edge from a node to himself
         for(int i = 0 ; i < graph.size(); i++) graph[i][i] = 0;
 
         for(int i = 0 ; i < graph.size(); i++)
@@ -87,24 +90,17 @@ struct DJSet {
             {
                 for(int k = 0; k < graph.size(); k++)
                 {
-                    //if(graph[j][i] == INF && graph[i][k] == INF) continue;
                     if(graph[j][i] + graph[i][k] < graph[j][k] and graph[j][i] != INF and graph[i][k] != INF)
                         graph[j][k] = graph[j][i] + graph[i][k];            
                 }
             }
         }
-
-
-
+        // Detecting negative cycles and marking them as -INF
         for(int i = 0; i < graph.size(); i++)
             for(int j = 0; j < graph.size(); j++)    // Go through all possible sources and targets
-                for(int k = 0; graph[i][j] != -INF && k < graph.size(); k++)
-                    if( graph[i][k] != INF && // Is there any path from i to k?
-                        graph[k][j] != INF && // Is there any path from k to j?
-                        graph[k][k] < 0)      // Is k part of a negative loop?
-        
-                        graph[i][j] = -INF;   // If all the above are true
-                                         // then the path from i to k is undefined
-
+                for(int k = 0; graph[i][j] != -INF && k < graph.size(); k++) // Checking if there's a negative in the path
+                    if( graph[i][k] != INF && graph[k][j] != INF && graph[k][k] < 0)     
+                        graph[i][j] = -INF;   
+                                         
         return graph;
     }
