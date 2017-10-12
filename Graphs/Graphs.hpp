@@ -6,6 +6,9 @@ using namespace std;
 
 typedef pair<pair<int,int>, int> w_edge;
 typedef pair<int,int> edge;
+typedef long long int LL;
+       
+int INF = 1e9;
 struct DJSet {
         int n; vector<int> root, size;
         DJSet(int N) : n(N),
@@ -41,20 +44,27 @@ struct DJSet {
             return l.second < r.second;
         }
     };
-  
-    pair<vector<edge>,int> Kruskal(vector<w_edge>graph, int nodes) 
+    // Obtaining the Minimum spanning tree, for Maximun spanning tree uncomment the reverse
+    // The graph is represented as a vector of w_edges
+    // w_edge acts as {u,v,weight} 
+    // returns the mst and the associated cost
+    pair<vector<edge>,LL> Kruskal(vector<w_edge>graph, int nodes) 
     {
+        // Sorting the edges by cost
         sort(graph.begin(), graph.end(),cost_comparator());
         // reverse(todas.begin(), todas.end());
         vector<edge> mst;
+        // using a Disjoint set to check if node it's already in the component
+        // in order to avoid cycles
         DJSet components(nodes);
-        int maxi = 0;
+        LL maxi = 0;
         for(int i = 0 ; i < graph.size(); i++)
         {
             int u = graph[i].first.first;
             int v = graph[i].first.second;
             if(!components.isConnected(u,v))
             {
+                // ordering by u < v
                 components.Join(u,v);
                 if(u > v)
                 swap(u,v);
@@ -64,4 +74,37 @@ struct DJSet {
         }
         sort(mst.begin(), mst.end());
         return make_pair(mst,maxi);
+    }
+
+    vector< vector<int> > floydWarshall(vector< vector<int> > graph )
+    {
+        //Case where there's an edge from a node to himself
+        for(int i = 0 ; i < graph.size(); i++) graph[i][i] = 0;
+
+        for(int i = 0 ; i < graph.size(); i++)
+        {
+            for(int j = 0; j < graph.size(); j++)
+            {
+                for(int k = 0; k < graph.size(); k++)
+                {
+                    //if(graph[j][i] == INF && graph[i][k] == INF) continue;
+                    if(graph[j][i] + graph[i][k] < graph[j][k] and graph[j][i] != INF and graph[i][k] != INF)
+                        graph[j][k] = graph[j][i] + graph[i][k];            
+                }
+            }
+        }
+
+
+
+        for(int i = 0; i < graph.size(); i++)
+            for(int j = 0; j < graph.size(); j++)    // Go through all possible sources and targets
+                for(int k = 0; graph[i][j] != -INF && k < graph.size(); k++)
+                    if( graph[i][k] != INF && // Is there any path from i to k?
+                        graph[k][j] != INF && // Is there any path from k to j?
+                        graph[k][k] < 0)      // Is k part of a negative loop?
+        
+                        graph[i][j] = -INF;   // If all the above are true
+                                         // then the path from i to k is undefined
+
+        return graph;
     }

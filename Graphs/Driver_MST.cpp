@@ -3,12 +3,12 @@ using namespace std;
 
 int main()
 {
-    int a = 600000000;
-    cout<<a<<endl;
     int n,m;
     while(cin>>n>>m)
     {
         if(n == 0 && m == 0) break;
+
+        //if(m == 0) {cout<<"Impossible\n"; continue;}
 
         vector<w_edge> graph;
         for(int i = 0 ; i < m; i++)
@@ -17,8 +17,8 @@ int main()
             cin>>a>>b>>c;
             graph.push_back(make_pair(make_pair(a,b),c));
         }
-        pair<vector<edge>,int> res = Kruskal(graph,n);
-        if(res.first.size() == 0)
+        pair<vector<edge>,LL> res = Kruskal(graph,n);
+        if(res.first.size() != n-1)
         {
             cout<<"Impossible\n";
             continue;
