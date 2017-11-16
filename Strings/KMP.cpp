@@ -28,9 +28,9 @@ vector <int> Build_Failure(string pattern)
 	return F;
 }
 
-int KMP(string text, string patttern) // only counts matches
+int KMP(string text, string pattern) // only counts matches
 {
-	vector <int> F = Build_Failure(patttern);
+	vector <int> F = Build_Failure(pattern);
 
 	int count = 0;
 	int state = 0;
@@ -39,11 +39,11 @@ int KMP(string text, string patttern) // only counts matches
 	{
 		if(index == text.size()) break;
 
-		if(text[index] == patttern[state] )
+		if(text[index] == pattern[state] )
 		{
 			state++;
 			index++;
-			if(state == patttern.size()) // need to change if unique ocurrences
+			if(state == pattern.size()) // need to change if unique ocurrences
 					count++;
 		}
 
