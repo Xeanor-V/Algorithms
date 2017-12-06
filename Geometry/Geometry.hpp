@@ -31,11 +31,20 @@ struct Point{
     bool operator==(const Point& cmp) {
         return Equal(x, cmp.x) && Equal(y, cmp.y);
     } 
+
+    double magnitude() { return hypot(x,y); }
     double dot(const Point p) { return x*p.x + y*p.y; }
     double cross(const Point p) { return x*p.y-p.x*y; }
     double dist(const Point p) { return(sqrt( (*this-p).dot(*this-p))); }
     double angle() { return atan2(y,x) * 180/M_PI; }
 };
+
+/**
+ *  translate a point to the a new coordinate system with origin at o
+ * */
+Point translate(Point o, Point p) {
+    return p-o;
+}
 
 /**
  * Takes in a vector of ordered points of a polygon given in either clockwise / counter clockwise direction
@@ -51,6 +60,52 @@ double polygon_area(vector<Point> polygon)
         return area;
 }
 
+/* *
+ * Check f line a-b is parallel to line c-d
+ * */
+bool parallel_segments(Point a, Point b, Point c, Point d){ // if (a,b) || (c,d)
+    return abs((a-b).cross(c-d)) < ERROR; // sin(x) = 0
+}
+
+/* *
+ * Check if point p lies on line a-b
+ * */
+bool point_on_segment(Point p, Point a, Point b){ // p belongs to [a,b] or not
+    if (p.dist(a) < ERROR) return true;
+    if (p.dist(b) < ERROR) return true;
+    if (parallel_segments(p,a,p,b) && (p-a).dot(p-b) < 0) return true; // to check
+    return false;
+}
+
+/**
+ * Check if point p lies on the polygon a
+ * */
+bool point_on_polygon(Point p, const vector<Point> polygon){
+    for (int i=0;i<polygon.size();i++)
+        if (point_on_segment(p,polygon[i],polygon[(i+1)%polygon.size()]))
+            return true;
+    return false;
+}
+
+/**
+ * Checks if where a point p lies with respect to polygon P
+ * Returns : -1 if p lies on the polygon
+ * 0 if p lies outside the polygon and
+ * 1 if p lies inside the polygon
+ * 
+ * Algorithm : Even–odd rule
+ * */
+int pointandpoly( Point p,  vector<Point> polygon) {
+    if (point_on_polygon(p, polygon)) return -1;
+    bool result = false;
+    int j = polygon.size()-1;
+    for(int i=0;i<polygon.size();i++){
+         if( ( (polygon[i].y > p.y) != (polygon[j].y > p.y) ) && (p.x < polygon[i].x + (polygon[j].x - polygon[i].x)*(p.y - polygon[i].y)/( polygon[j].y - polygon[i].y)))
+            result = !result;
+        j = i;
+    }
+    return result? 1:0;
+}
 /**
  * Line definition by two points.
  * */
