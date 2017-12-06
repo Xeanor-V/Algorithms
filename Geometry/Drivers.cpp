@@ -11,7 +11,7 @@ int main(){
             break;
 
         count = test;
-        vector<point> polygon(count);
+        vector<Point> polygon(count);
         int i = 0;
         while(count--){
             cin>>polygon[i].x>>polygon[i].y;
