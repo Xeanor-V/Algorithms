@@ -3,6 +3,8 @@
 using namespace std;
 
 
+
+/* Polygon Area
 int main(){
     int test,count;
     cin>>test;
@@ -29,4 +31,9 @@ int main(){
         }
         cin>>test;
     }
+} //*/
+
+int main()
+{
+    
 }

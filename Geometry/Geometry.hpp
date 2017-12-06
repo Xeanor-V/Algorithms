@@ -35,6 +35,23 @@ struct Point{
     double cross(const Point p) { return x*p.y-p.x*y; }
     double dist(const Point p) { return(sqrt( (*this-p).dot(*this-p))); }
     double angle() { return atan2(y,x) * 180/M_PI; }
+
+    /**
+     * Moves a vector 'p' to origin 'o'
+     * */
+    Point Move(Point o) {
+        return Point(x - o.x, y - o.y);
+    }
+
+    /**
+     * Right Hand method for determmining the orientation of two vectors
+     * CCW = 1, CW = -1, Colineal = 0.
+     * */
+    int RightHand(Point o, Point q) {
+        Point aux = Move(o);
+        double ccw = aux.cross(q.Move(o));
+        return Equal(ccw, 0)? 0: (ccw < 0)? -1: 1;
+    }
 };
 
 /**
@@ -100,4 +117,38 @@ struct Line {
         if (!Equal(b, cmp.b)) return b < cmp.b;
         return Equal(c, cmp.c)? false: c < cmp.c;
     }
+
+    // Saber si dos lineas l y m son paralelas.
+    bool isParallel(Line m) {
+    //return l.a == m.a && l.b == m.b; // <comment/>
+    // <uncomment>
+    if (Equal(b, 0) || Equal(m.b, 0))
+        return Equal(a, m.a) && Equal(b, m.b); 
+    return Equal(a/b, m.a/m.b);
+    // </uncomment>
+    }
+
+    bool isEqual(const Linea& m) {
+        return isParallel(m) && Equal(c, m.c);
+    }
 };
+
+
+// Saber si dos lineas l y m son iguales.
+bool LineasIguales(const Linea& l, const Linea& m) {
+    return LineasParalelas(l, m) && Equal(l.c, m.c);
+}
+
+
+// Saber si una recta r y un segmento s se intersectan.
+// No intersectan = 0, Interseccion en un punto = 1,
+// Interseccion paralela en infinitos puntos = -1.
+int IntersecRectaSegmen(const Linea& r, const Linea& s) 
+{
+    if (r.isEqual(s) ) return -1;
+    if (r.isParallel(s) ) return 0;
+    int t1 = r.p.RightHand(r.q,s.p); 
+    int t2 = r.p.RightHand(r.q,s.q); 
+    return (t1 != t2)? 1: 0;
+}
+
