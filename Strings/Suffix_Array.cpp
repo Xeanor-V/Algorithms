@@ -19,7 +19,8 @@ int cmp(struct tuple a, struct tuple b) // Check tuples current step and next on
 
 int sortIndex[5000][maxN];
 
-int Suffix_Array(string s)
+
+vector<int> Suffix_Array(string s)
 {
 	for(int i = 0 ; i < s.size() ; i++) //let's get all suffixes, we only need the first letter later we can form everyone based on this.
 		sortIndex[0][i] = s[i] -'a';
@@ -45,23 +46,22 @@ int Suffix_Array(string s)
 									sortIndex[ step ][ L[i-1].pos ] : i;
 		}
 		// after the sort the first one stays the same, now if it has the same values as i-1 it gets the same SI, if not then i (new SI)
-
 	}
-	return step;
-
+	vector <int> S_Array;
+	for(int i = 0; i < s.size(); i++)
+	{
+		S_Array.push_back(sortIndex[step-1][i]);
+	}
+	return S_Array;
 }
 
 int main()
 {
 	string a;
 	cin>>a;
-	int step = Suffix_Array(a);
-
-	for(int i = 0 ; i < step; i++)
-	{
-		for(int j = 0 ; j < a.size(); j++)
-			cout<<sortIndex[i][j]<<' ';
-		cout<<'\n';
-	}
+	vector<int> S_Array = Suffix_Array(a);
+	for(int i = 0 ; i < S_Array.size(); i++)
+		cout<<S_Array[i]<<' ';
+	cout<<'\n';
 	return 0;
 }
