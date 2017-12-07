@@ -158,6 +158,7 @@ vector<Point> ConvexHull(vector<Point> P){
 
 /**
  * Helper methods for closest two pair of points.
+ * Using globals for recursion.
  * */
 double best_distance_pair;
 Point global_point1,global_point2;
@@ -241,6 +242,70 @@ double Closest_pair_points_process(Point* pointsByX, Point* pointsByY, Point* au
     return make_pair(best_distance_pair, make_pair(global_point1,global_point2));
  }
 
+
+/**
+ * Maximum collinear finds the maximum number of collinear points (redundance?)
+ * Returns : integer with the maximum number.
+ * */
+int maxPointOnSameLine(vector< Point > points)
+{
+    int N = points.size();
+    if (N < 2)
+        return N;
+ 
+    int maxPoint = 0;
+    int curMax, overlapPoints, verticalPoints;
+ 
+    // map to store slope pair
+    map<Point, int> slopeMap;
+ 
+    //  looping for each point
+    for (int i = 0; i < N; i++)
+    {
+        curMax = overlapPoints = verticalPoints = 0;
+ 
+        //  looping from i + 1 to ignore same pair again
+        for (int j = i + 1; j < N; j++)
+        {
+            //  If both point are equal then just
+            // increase overlapPoint count
+            if (points[i] == points[j])
+                overlapPoints++;
+ 
+            // If x co-ordinate is same, then both
+            // point are vertical to each other
+            else if (points[i].x == points[j].x)
+                verticalPoints++;
+ 
+            else
+            {
+                int yDif = points[j].y - points[i].y;
+                int xDif = points[j].x - points[i].x;
+                int g = __gcd(xDif, yDif);
+ 
+                // reducing the difference by their gcd
+                yDif /= g;
+                xDif /= g;
+ 
+                // increasing the frequency of current slope
+                // in map
+                slopeMap[Point(yDif, xDif)]++;
+                curMax = max(curMax, slopeMap[Point(yDif, xDif)]);
+            }
+ 
+            curMax = max(curMax, verticalPoints);
+        }
+ 
+        // updating global maximum by current point's maximum
+        maxPoint = max(maxPoint, curMax + overlapPoints + 1);
+ 
+        // printf("maximum colinear point which contains current
+        // point are : %d\n", curMax + overlapPoints + 1);
+        slopeMap.clear();
+    }
+ 
+    return maxPoint;
+}
 
 
 

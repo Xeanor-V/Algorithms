@@ -2,7 +2,7 @@
 using namespace std;
 
 long long B = 31; // Size of Alphabet
-long long M = 512927377; //A  big prime
+long long M = 123891739; //A  big prime
 
 long long int_mod(long long a, long long b) 
 {

@@ -65,7 +65,7 @@ int main()
 // */
 
 
-///* closest Pair of points
+/* closest Pair of points
 int main()
 {
     //cin.tie(0);
@@ -88,4 +88,28 @@ int main()
 
     }
     return 0;
+}*/
+
+///* Maximum number of collinear points
+int main()
+{
+    cin.tie(0);
+    ios_base::sync_with_stdio(0);
+    int N;
+    while(cin>>N)
+    {
+        if(N == 0) break;
+        vector< Point > points;
+        for(int i = 0 ; i < N; i++)
+        {
+            int x,y;
+            cin>>x>>y;
+            points.push_back(Point(x,y));
+        }
+     
+        cout << maxPointOnSameLine(points) << endl;
+    }
+ 
+    return 0;
 }
+//*/
