@@ -202,9 +202,10 @@ vector<Point> ConvexHull(vector<Point> P){
 
 /**
  * Helper methods for closest two pair of points.
+ * Using globals for recursion.
  * */
 double best_distance_pair;
-Point result1,result2;
+Point global_point1,global_point2;
 
 // comparison first done by y coordinate, then by x coordinate
 bool Comparison_Y(Point a, Point b) {
@@ -212,8 +213,11 @@ bool Comparison_Y(Point a, Point b) {
     if(a.y > b.y) return false;
     return a.x < b.x;
 }
+bool comparison_X(Point a, Point b)  {
+    return a.x < b.x;
+}
 
-void merge(vector<Point> &a, vector<Point> &aux, int lo, int mid, int hi)   {
+void merge(Point* a, Point* aux, int lo, int mid, int hi)   {
     int i, j, k;
     for(k = lo; k <= hi; k++)
         aux[k] = a[k];
@@ -227,18 +231,13 @@ void merge(vector<Point> &a, vector<Point> &aux, int lo, int mid, int hi)   {
         a[k++] = aux[i++];
 }
 
-pair< double, pair<Point,Point> >  Closest_pair_points_process(vector<Point> &pointsByX, vector<Point> &pointsByY, vector<Point> &aux, int lo, int hi)    {
-   
-    pair< double, pair<Point,Point> > result;
-    Point result1,result2;
+double Closest_pair_points_process(Point* pointsByX, Point* pointsByY, Point* aux, int lo, int hi)    {
     if(hi <= lo)
-        return make_pair(numeric_limits<double>::infinity(),make_pair(Point(),Point()));
+    	 return numeric_limits<double>::infinity();
 
     int mid = lo + (hi - lo)/2;
-    result = Closest_pair_points_process(pointsByX, pointsByY, aux, lo, mid);
-    double delta = result.first;
-    result = Closest_pair_points_process(pointsByX, pointsByY, aux, mid+1, hi);
-    double dist = result.first;
+    double delta =  Closest_pair_points_process(pointsByX, pointsByY, aux, lo, mid);
+    double dist =  Closest_pair_points_process(pointsByX, pointsByY, aux, mid+1, hi);
     if(dist < delta)
         delta = dist;
 
@@ -256,14 +255,14 @@ pair< double, pair<Point,Point> >  Closest_pair_points_process(vector<Point> &po
             if(distance < delta)    {
                 delta = distance;
                 if(delta < best_distance_pair) {
-                    best_distance_pair = delta;
-                    result1 = aux[i];
-                    result2 = aux[j];
+                	best_distance_pair = delta;
+                    global_point1 = aux[i];
+                    global_point2 = aux[j];
                 }
             }
         }
     }
-    return make_pair(delta,make_pair(result1,result2));
+    return delta;
 }
 
 /**
@@ -273,12 +272,18 @@ pair< double, pair<Point,Point> >  Closest_pair_points_process(vector<Point> &po
  * */
  pair< double, pair<Point,Point> > Closest_pair_points(vector<Point> points)
  {
-     sort(points.begin(), points.end()); // Tal vez falle aqui
-     vector<Point> pointsByY(points.size()), aux(points.size());
-     for(int i = 0; i < points.size(); i++)
-        pointsByY[i] = points[i];
+ 	int N = points.size();
+ 	Point P[N], pointsByY[N], aux[N];
+
+ 	for(int i = 0 ; i < N; i++)
+ 		P[i] = points[i];
+ 	sort(P, P + N, comparison_X);
+        for(int i=0; i<N; i++)
+            pointsByY[i] = P[i];
+
     best_distance_pair = numeric_limits<double>::infinity();
-    return Closest_pair_points_process(points,pointsByY,aux,0,points.size()-1);
+    Closest_pair_points_process(P,pointsByY,aux,0,points.size()-1);
+    return make_pair(best_distance_pair, make_pair(global_point1,global_point2));
  }
 
 /**
@@ -304,6 +309,72 @@ double distance(Point a, Point b, Point c, Point d){
         return *it;
     }   
 }
+
+/**
+ * Maximum collinear finds the maximum number of collinear points (redundance?)
+ * Returns : integer with the maximum number.
+ * */
+int maxPointOnSameLine(vector< Point > points)
+{
+    int N = points.size();
+    if (N < 2)
+        return N;
+ 
+    int maxPoint = 0;
+    int curMax, overlapPoints, verticalPoints;
+ 
+    // map to store slope pair
+    map<Point, int> slopeMap;
+ 
+    //  looping for each point
+    for (int i = 0; i < N; i++)
+    {
+        curMax = overlapPoints = verticalPoints = 0;
+ 
+        //  looping from i + 1 to ignore same pair again
+        for (int j = i + 1; j < N; j++)
+        {
+            //  If both point are equal then just
+            // increase overlapPoint count
+            if (points[i] == points[j])
+                overlapPoints++;
+ 
+            // If x co-ordinate is same, then both
+            // point are vertical to each other
+            else if (points[i].x == points[j].x)
+                verticalPoints++;
+ 
+            else
+            {
+                int yDif = points[j].y - points[i].y;
+                int xDif = points[j].x - points[i].x;
+                int g = __gcd(xDif, yDif);
+ 
+                // reducing the difference by their gcd
+                yDif /= g;
+                xDif /= g;
+ 
+                // increasing the frequency of current slope
+                // in map
+                slopeMap[Point(yDif, xDif)]++;
+                curMax = max(curMax, slopeMap[Point(yDif, xDif)]);
+            }
+ 
+            curMax = max(curMax, verticalPoints);
+        }
+ 
+        // updating global maximum by current point's maximum
+        maxPoint = max(maxPoint, curMax + overlapPoints + 1);
+ 
+        // printf("maximum colinear point which contains current
+        // point are : %d\n", curMax + overlapPoints + 1);
+        slopeMap.clear();
+    }
+ 
+    return maxPoint;
+}
+
+
 
 
 

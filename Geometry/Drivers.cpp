@@ -65,7 +65,7 @@ int main()
 // */
 
 
-///* closest Pair of points
+/* closest Pair of points
 int main()
 {
     //cin.tie(0);
@@ -81,10 +81,35 @@ int main()
             scanf("%lf %lf", &x, &y);
             points[i] = Point(x,y);
         }
+        if(n <= 1) return 0;
         pair<double, pair< Point, Point> > res = Closest_pair_points(points);
         printf("%lf %lf ", res.second.second.x, res.second.second.y);
         printf("%lf %lf\n", res.second.first.x, res.second.first.y);
 
     }
     return 0;
+}*/
+
+///* Maximum number of collinear points
+int main()
+{
+    cin.tie(0);
+    ios_base::sync_with_stdio(0);
+    int N;
+    while(cin>>N)
+    {
+        if(N == 0) break;
+        vector< Point > points;
+        for(int i = 0 ; i < N; i++)
+        {
+            int x,y;
+            cin>>x>>y;
+            points.push_back(Point(x,y));
+        }
+     
+        cout << maxPointOnSameLine(points) << endl;
+    }
+ 
+    return 0;
 }
+//*/
