@@ -81,6 +81,7 @@ int main()
             scanf("%lf %lf", &x, &y);
             points[i] = Point(x,y);
         }
+        if(n <= 1) return 0;
         pair<double, pair< Point, Point> > res = Closest_pair_points(points);
         printf("%lf %lf ", res.second.second.x, res.second.second.y);
         printf("%lf %lf\n", res.second.first.x, res.second.first.y);

@@ -1,8 +1,4 @@
-#include <cstdio>
-#include <algorithm>
-#include <cmath>
-#include <limits>
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 
 struct Point {
