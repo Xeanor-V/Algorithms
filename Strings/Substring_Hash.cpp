@@ -9,6 +9,11 @@ long long int_mod(long long a, long long b)
 	return ( a % b + b) % b;
 }
 
+/**
+ * Given a string generates the polynomial hashes of the prefixes.
+ * Returns: Vector of long long int containin the hashes
+ * */
+
 vector <long long int> prefix_hashes(string s)
 {
 	vector <long long int> res;
@@ -21,7 +26,10 @@ vector <long long int> prefix_hashes(string s)
 	return res;
 } 
 
-
+/**
+ * Given a string and ranges od queries, generates the hashes for those ranges
+ * Returns: Vector of long long int containin the hashes
+ * */
 vector <long long int> substring_hashes(vector< pair<int,int> > ranges, string s)
 {
 	vector <long long int> p_hashes = prefix_hashes(s);
