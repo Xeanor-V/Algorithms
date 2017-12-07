@@ -1,7 +1,8 @@
 /**
+ * 
  * Geometry Headers
- * Authors
- * David Vega and Rohin Mohanadas
+ * Authors : David Vega and Rohin Mohanadas
+ * 
  * */
 
 #include <bits/stdc++.h>
