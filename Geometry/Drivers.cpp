@@ -31,7 +31,7 @@ int main(){
     }
 } //*/
 
-/* Convex Hull 
+///* Convex Hull 
 int main()
 {
     cin.tie(0);
@@ -48,14 +48,8 @@ int main()
             poly.push_back(Point(x,y));
         }
         res = ConvexHull(poly);
-        if(  res.size() == 1  ||  ( (res.size()-1) == 2 && res[0] == res[1]) )
-        {
-            cout<<1<<'\n';
-            cout<<res[0].x<<' '<<res[0].y<<'\n';
-            continue;
-        }
         cout<<res.size()-1<<'\n';
-        for(int i = 0; i < res.size()-1; i++)
+        for(int i = res.size()-2; i >=0; i--)
         {
             cout<<res[i].x<<' '<<res[i].y<<'\n';
         }
@@ -90,7 +84,7 @@ int main()
     return 0;
 }*/
 
-///* Maximum number of collinear points
+/* Maximum number of collinear points
 int main()
 {
     cin.tie(0);

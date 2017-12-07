@@ -45,17 +45,19 @@ struct Point{
         return Point(x - o.x, y - o.y);
     }
 
-    /**
-     * Right Hand method for determmining the orientation of two vectors
-     * using 'o' as origin of vectors
-     * CCW = 1, CW = -1, Colinear = 0.
-     * */
-    int RightHand(Point o, Point q) {
-        Point aux = Move(o);
-        double ccw = aux.cross(q.Move(o));
-        return Equal(ccw, 0)? 0: (ccw < 0)? -1: 1;
-    }
 };
+
+/**
+ * Right Hand method for determmining the orientation of two vectors
+ * using 'o' as origin of vectors
+ * CCW = 1, CW = -1, Colinear = 0.
+ * */
+int RightHand(Point o, Point p, Point q) {
+    Point aux = p.Move(o);
+    double ccw = p.Move(o).cross(q.Move(o));
+    return Equal(ccw, 0)? 0: (ccw < 0)? -1: 1;
+}
+
 
 /* *
  * Check f line a-b is parallel to line c-d
@@ -171,7 +173,7 @@ int point_inside_polygon( Point p,  vector<Point> polygon) {
 
 /**
  * Convex hull of a given set of points
- * Returns : vector of points representing the polygon
+ * Returns : vector of points representing the polygon (Full polygon, last point is also the start)
  * */
 vector<Point> ConvexHull(vector<Point> P){
     sort(P.begin(), P.end());
@@ -180,7 +182,7 @@ vector<Point> ConvexHull(vector<Point> P){
         while (Up.size() > 1) {
             int p = Up.size() - 1;
             // Allow colineals: <=
-            if (Up[p-1].RightHand(Up[p], P[i]) < 0) break;
+            if (RightHand(Up[p-1],Up[p], P[i]) < 0) break;
             Up.pop_back();
         }
         Up.push_back(P[i]);
@@ -190,13 +192,20 @@ vector<Point> ConvexHull(vector<Point> P){
         while (Down.size() > 1) {
             int p = Down.size() - 1;
             // Allow colineals: <=
-            if (Down[p - 1].RightHand(Down[p], P[i]) < 0) break;
+            if (RightHand(Down[p - 1],Down[p], P[i]) < 0) break;
             Down.pop_back();
         }
         Down.push_back(P[i]);
     }
     Up.insert(Up.end(),
         Down.begin(), Down.end());
+
+    if(  Up.size() == 1  ||  ( (Up.size()-1) == 2 && Up[0] == Up[1]) )
+    {
+        vector<Point> aux(2);
+        aux[1] = aux[0] = Up[0];
+        return aux;
+    }
     return Up; // Convex hull.
 }
 
