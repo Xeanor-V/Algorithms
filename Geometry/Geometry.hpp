@@ -57,25 +57,11 @@ struct Point{
     }
 };
 
-/**
- * Takes in a vector of ordered points of a polygon given in either clockwise / counter clockwise direction
- * Returns the area of the polygon ( -ve value for CW Point vector and +ve for CCW)
- * */
-double polygon_area(vector<Point> polygon)
-{
-        double area= 0;
-        for(int i=0;i<polygon.size();i++){
-            area+= polygon[i].cross(polygon[(i+1)%polygon.size()]);
-        }
-        area = area/2; 
-        return area;
-}
-
 /* *
  * Check f line a-b is parallel to line c-d
  * */
-bool parallel_segments(Point a, Point b, Point c, Point d){ // if (a,b) || (c,d)
-    return abs((a-b).cross(c-d)) < ERROR; // sin(x) = 0
+bool parallel_segments(Point a, Point b, Point c, Point d){
+    return abs((a-b).cross(c-d)) < ERROR;
 }
 
 /* *
@@ -150,6 +136,20 @@ Point projection(Point p, Point a, Point b){
 }
 
 /**
+ * Takes in a vector of ordered points of a polygon given in either clockwise / counter clockwise direction
+ * Returns the area of the polygon ( -ve value for CW Point vector and +ve for CCW)
+ * */
+double polygon_area(vector<Point> polygon){
+        double area= 0;
+        for(int i=0;i<polygon.size();i++){
+            area+= polygon[i].cross(polygon[(i+1)%polygon.size()]);
+        }
+        area = area/2; 
+        return area;
+}
+
+
+/**
  * Checks if where a point p lies with respect to polygon P
  * Returns : -1 if p lies on the polygon
  * 0 if p lies outside the polygon and
@@ -157,7 +157,7 @@ Point projection(Point p, Point a, Point b){
  * 
  * Algorithm : Even–odd rule
  * */
-int pointandpoly( Point p,  vector<Point> polygon) {
+int point_inside_polygon( Point p,  vector<Point> polygon) {
     if (point_on_polygon(p, polygon)) return -1;
     bool result = false;
     int j = polygon.size()-1;
@@ -290,7 +290,7 @@ double Closest_pair_points_process(Point* pointsByX, Point* pointsByY, Point* au
  * Input 4 points a, b, c, d ( which denote 2 line segments a-b and c-d)
  * Output the minimum distance between the 2 line segments
  * */
-double distance(Point a, Point b, Point c, Point d){
+double segment_distance(Point a, Point b, Point c, Point d){
     if (segments_intersection(a,b,c,d)) 
         return 0.0f;  
     else {

@@ -20,7 +20,7 @@ int main(){
         while(points--){
             Point p;
             cin>>p.x>>p.y;
-            switch(pointandpoly(p,polygon)){
+            switch(point_inside_polygon(p,polygon)){
                 case 0: cout<<"out\n";
                 break;
                 case 1: cout<<"in\n";
