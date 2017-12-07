@@ -24,7 +24,7 @@ struct Point{
     Point operator+(const Point p) { return Point(x+p.x,y+p.y); }
     Point operator-(const Point p) { return Point(x-p.x,y-p.y); }
     Point operator*(const double v) { return Point(x*v,y*v); }
-    bool operator<(const Point& cmp) {
+    bool operator<(const Point& cmp) const {
         if (!Equal(x, cmp.x)) return x < cmp.x;
         return Equal(y, cmp.y)? false: y < cmp.y;
     }
@@ -47,6 +47,7 @@ struct Point{
 
     /**
      * Right Hand method for determmining the orientation of two vectors
+     * using 'o' as origin of vectors
      * CCW = 1, CW = -1, Colineal = 0.
      * */
     int RightHand(Point o, Point q) {
@@ -123,87 +124,123 @@ int pointandpoly( Point p,  vector<Point> polygon) {
     }
     return result? 1:0;
 }
+
 /**
- * Line definition by two points.
+ * Convex hull of a given set of points
+ * Returns : vector of points representing the polygon
  * */
-struct Line {
-    Point p, q;
-    //Long a, b, c; // <comment/>
-    double a, b, c; // <uncomment/>
-
-    Line() : p(), q(), a(), b(), c() {}
-
-    Line(Long A, Long B, Long C)
-        : p(), q(), a(A), b(B), c(C) {
-        if (Equal(a, 0)) {
-            c /= -b; b = -1;
-            p = Point(0, c);
-            q = Point(1, c);
-        } else if (Equal(b, 0)) {
-            c /= -a; a = -1;
-            p = Point(c, 0);
-            q = Point(c, 1);
-        } else {
-            p = Point(-c/a, 0);
-            q = Point(-(b+c)/a, 1);
-        } if (q < p) swap(p, q);
+vector<Point> ConvexHull(vector<Point> P){
+    sort(P.begin(), P.end());
+    vector<Point> Up, Down;
+    for (int i = 0; i < P.size(); ++i) {
+        while (Up.size() > 1) {
+            int p = Up.size() - 1;
+            // Allow colineals: <=
+            if (Up[p-1].RightHand(Up[p], P[i]) < 0) break;
+            Up.pop_back();
+        }
+        Up.push_back(P[i]);
     }
+    Up.pop_back();
+    for (int i = P.size() - 1; i >= 0; --i) {
+        while (Down.size() > 1) {
+            int p = Down.size() - 1;
+            // Allow colineals: <=
+            if (Down[p - 1].RightHand(Down[p], P[i]) < 0) break;
+            Down.pop_back();
+        }
+        Down.push_back(P[i]);
+    }
+    Up.insert(Up.end(),
+        Down.begin(), Down.end());
+    return Up; // Convex hull.
+}
 
-    Line(const Point& P, const Point& Q)
-        : p(P), q(Q), a(), b(), c() {
-        // Asegura p como Point menor.
-        if (q < p) swap(p, q);
-        a = q.y - p.y;
-        b = p.x - q.x;
-        if (!a) c = p.y, b = -1;
-        else if (!b) c = p.x, a = -1;
-        else {
-            /* <comment>
-            c = abs(__gcd(a, b));
-            a /= c, b /= c;
-            // </comment>*/
-            c = -a*p.x - b*p.y;
+/**
+ * Helper methods for closest two pair of points.
+ * */
+double best_distance_pair;
+Point result1,result2;
+
+// comparison first done by y coordinate, then by x coordinate
+bool Comparison_Y(Point a, Point b) {
+    if(a.y < b.y) return true;
+    if(a.y > b.y) return false;
+    return a.x < b.x;
+}
+
+void merge(vector<Point> &a, vector<Point> &aux, int lo, int mid, int hi)   {
+    int i, j, k;
+    for(k = lo; k <= hi; k++)
+        aux[k] = a[k];
+
+    i = lo; j = mid + 1; k = lo;
+    while(i <= mid && j <= hi)
+        a[k++] = Comparison_Y(aux[i], aux[j]) ? aux[i++] : aux[j++];
+
+    // Copy the rest of the left side of the array into the target array
+    while(i <= mid)
+        a[k++] = aux[i++];
+}
+
+pair< double, pair<Point,Point> >  Closest_pair_points_process(vector<Point> &pointsByX, vector<Point> &pointsByY, vector<Point> &aux, int lo, int hi)    {
+   
+    pair< double, pair<Point,Point> > result;
+    Point result1,result2;
+    if(hi <= lo)
+        return make_pair(numeric_limits<double>::infinity(),make_pair(Point(),Point()));
+
+    int mid = lo + (hi - lo)/2;
+    result = Closest_pair_points_process(pointsByX, pointsByY, aux, lo, mid);
+    double delta = result.first;
+    result = Closest_pair_points_process(pointsByX, pointsByY, aux, mid+1, hi);
+    double dist = result.first;
+    if(dist < delta)
+        delta = dist;
+
+    merge(pointsByY, aux, lo, mid, hi);
+
+    int M = 0, i, j;
+    for(i = lo; i <= hi; i++)
+        if(abs(pointsByY[i].x - pointsByX[mid].x) < delta)
+            aux[M++] = pointsByY[i];
+
+    double distance, t;
+    for(i = 0; i < M; i++)  {
+        for(j = i+1; j < M && (aux[j].y - aux[i].y < delta); j++) {
+            distance = aux[i].dist(aux[j]);
+            if(distance < delta)    {
+                delta = distance;
+                if(delta < best_distance_pair) {
+                    best_distance_pair = delta;
+                    result1 = aux[i];
+                    result2 = aux[j];
+                }
+            }
         }
     }
-
-    // ¡PELIGRO! Ordena por ecuacion de recta.
-    bool operator<(const Line& cmp) const {
-        if (!Equal(a, cmp.a)) return a < cmp.a;
-        if (!Equal(b, cmp.b)) return b < cmp.b;
-        return Equal(c, cmp.c)? false: c < cmp.c;
-    }
-
-    // Saber si dos lineas l y m son paralelas.
-    bool isParallel(Line m) {
-    //return l.a == m.a && l.b == m.b; // <comment/>
-    // <uncomment>
-    if (Equal(b, 0) || Equal(m.b, 0))
-        return Equal(a, m.a) && Equal(b, m.b); 
-    return Equal(a/b, m.a/m.b);
-    // </uncomment>
-    }
-
-    bool isEqual(const Linea& m) {
-        return isParallel(m) && Equal(c, m.c);
-    }
-};
-
-
-// Saber si dos lineas l y m son iguales.
-bool LineasIguales(const Linea& l, const Linea& m) {
-    return LineasParalelas(l, m) && Equal(l.c, m.c);
+    return make_pair(delta,make_pair(result1,result2));
 }
 
+/**
+ * Closest pair of tho points of a given vector of points
+ * Returns : pair< double, pair<Point,Point> > the first element is the distance
+ * the second elements are the points.
+ * */
+ pair< double, pair<Point,Point> > Closest_pair_points(vector<Point> points)
+ {
+     sort(points.begin(), points.end()); // Tal vez falle aqui
+     vector<Point> pointsByY(points.size()), aux(points.size());
+     for(int i = 0; i < points.size(); i++)
+        pointsByY[i] = points[i];
+    best_distance_pair = numeric_limits<double>::infinity();
+    return Closest_pair_points_process(points,pointsByY,aux,0,points.size()-1);
+ }
 
-// Saber si una recta r y un segmento s se intersectan.
-// No intersectan = 0, Interseccion en un punto = 1,
-// Interseccion paralela en infinitos puntos = -1.
-int IntersecRectaSegmen(const Linea& r, const Linea& s) 
-{
-    if (r.isEqual(s) ) return -1;
-    if (r.isParallel(s) ) return 0;
-    int t1 = r.p.RightHand(r.q,s.p); 
-    int t2 = r.p.RightHand(r.q,s.q); 
-    return (t1 != t2)? 1: 0;
-}
+
+
+
+
+
+
 
