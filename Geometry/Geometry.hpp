@@ -48,7 +48,7 @@ struct Point{
     /**
      * Right Hand method for determmining the orientation of two vectors
      * using 'o' as origin of vectors
-     * CCW = 1, CW = -1, Colineal = 0.
+     * CCW = 1, CW = -1, Colinear = 0.
      * */
     int RightHand(Point o, Point q) {
         Point aux = Move(o);
@@ -56,13 +56,6 @@ struct Point{
         return Equal(ccw, 0)? 0: (ccw < 0)? -1: 1;
     }
 };
-
-/**
- *  translate a point to the a new coordinate system with origin at o
- * */
-Point translate(Point o, Point p) {
-    return p-o;
-}
 
 /**
  * Takes in a vector of ordered points of a polygon given in either clockwise / counter clockwise direction
@@ -103,6 +96,57 @@ bool point_on_polygon(Point p, const vector<Point> polygon){
         if (point_on_segment(p,polygon[i],polygon[(i+1)%polygon.size()]))
             return true;
     return false;
+}
+
+/* *
+ * Check if line segments intersect
+ * Output : false if the line segments do not intersect
+ *          true if the line segments intersect
+ * */
+bool segments_intersection(Point a, Point b, Point c, Point d){
+    // Check if a or b are same as c or d
+    if(a.dist(c)<ERROR || a.dist(d)<ERROR || b.dist(c)<ERROR || b.dist(d)<ERROR)
+        return true;
+    // Check if both line segments are points
+    if(a.dist(b)<ERROR && b.dist(d)<ERROR)
+        return false;
+    // Check if either line segments are points and lie on the other
+    if(a.dist(b)<ERROR)
+        return point_on_segment(a,c,d);
+    if(c.dist(d)<ERROR)
+        return point_on_segment(c,a,b);
+    // Parallel line segments cases
+    // first check if all 4 points are collinear
+    if(parallel_segments(a,b,c,d) && parallel_segments(a,c,b,d) && parallel_segments(a,d,c,b)){
+        // yes, colliner now check overlap
+        if((point_on_segment(a,c,d))||(point_on_segment(b,c,d))||(point_on_segment(c,a,b))||(point_on_segment(d,a,b)))
+            return true;
+        return false;
+    }
+
+    if((a-b).cross(a-c) * (a-b).cross(a-d) > 0)
+        return false;
+    if((c-d).cross(c-a) * (c-d).cross(c-b) > 0)
+        return false;   
+
+    return true; 
+}
+
+/**
+ * 
+ * Find the projection of point p onto line a-b ( onto the closest point)
+ * if a perpendicular projection is not possible, return on of the two endpoints depending upon the distance
+ * 
+ * */
+Point projection(Point p, Point a, Point b){
+    if(a.dist(b)<ERROR){
+        return a;
+    }
+    double result = (p-a).dot(b-a)/a.dist(b);
+    if(result < 0) return a;
+    if(result > a.dist(b)) return b;
+
+    return a + (b-a) * (result/a.dist(b));
 }
 
 /**
@@ -237,8 +281,29 @@ pair< double, pair<Point,Point> >  Closest_pair_points_process(vector<Point> &po
     return Closest_pair_points_process(points,pointsByY,aux,0,points.size()-1);
  }
 
+/**
+ * Input 4 points a, b, c, d ( which denote 2 line segments a-b and c-d)
+ * Output the minimum distance between the 2 line segments
+ * */
+double distance(Point a, Point b, Point c, Point d){
+    if (segments_intersection(a,b,c,d)) 
+        return 0.0f;  
+    else {
 
+        vector<double> D(4,DBL_MAX);
+        Point p[4];
+        // Find projection of each point onto the other line and find the minimum distance from the point to those projections
+        p[0] = projection(a,c,d), p[1] = projection(b,c,d), p[2] = projection(c,a,b), p[3] = projection(d,a,b);
 
+        D[0] = a.dist(p[0]);
+        D[1] = b.dist(p[1]);
+        D[2] = c.dist(p[2]);
+        D[3] = d.dist(p[3]);
+
+        vector<double>::iterator it = min_element(D.begin(),D.end());
+        return *it;
+    }   
+}
 
 
 
